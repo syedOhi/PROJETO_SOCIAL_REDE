@@ -1,7 +1,9 @@
 package com.example.social_rede_mobile
 
+import android.app.Application
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,27 +12,54 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.social_rede_mobile.data.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(navController: NavController) {
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("buzz_prefs", android.content.Context.MODE_PRIVATE)
+    val loggedInUsername = prefs.getString("username", "") ?: ""
 
-    var fullName by remember { mutableStateOf("Syed Rahman") }
-    var firstName by remember { mutableStateOf("Syed") }
-    var lastName by remember { mutableStateOf("Rahman") }
+    val userViewModel: UserViewModel = viewModel(factory = viewModelFactory {
+        initializer { UserViewModel(context.applicationContext as Application) }
+    })
+
+    val userLiveData = userViewModel.getUserByUsername(loggedInUsername)
+    val currentUser by userLiveData.observeAsState()
+
+    // Editable fields
+    var fullName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+    var dob by remember { mutableStateOf("") }
+
+    // Fill initial values
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            fullName = it.fullName
+            password = it.password
+            bio = it.bio
+            dob = it.dob
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -51,16 +80,27 @@ fun EditProfileScreen(navController: NavController) {
                 .padding(horizontal = 24.dp, vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // 📸 Profile Image Section
+            // 👤 Profile Image
             Box(
                 modifier = Modifier
                     .size(130.dp)
                     .padding(top = 8.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
+                val profilePainter = when {
+                    !currentUser?.profileImageUri.isNullOrEmpty() -> {
+                        rememberAsyncImagePainter(Uri.parse(currentUser!!.profileImageUri))
+                    }
+                    currentUser?.profileImageResId != null -> {
+                        painterResource(id = currentUser!!.profileImageResId!!)
+                    }
+                    else -> {
+                        painterResource(id = R.drawable.profile_icon)
+                    }
+                }
+
                 Image(
-                    painter = painterResource(id = R.drawable.profile_icon),
+                    painter = profilePainter,
                     contentDescription = "Profile Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -69,6 +109,7 @@ fun EditProfileScreen(navController: NavController) {
                         .shadow(8.dp, CircleShape)
                         .clickable { /* TODO: Handle image picker */ }
                 )
+
                 Icon(
                     imageVector = Icons.Default.CameraAlt,
                     contentDescription = "Edit Picture",
@@ -81,7 +122,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔲 Form Background Card
+            // 📝 Editable Form
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -103,26 +144,27 @@ fun EditProfileScreen(navController: NavController) {
                     )
 
                     OutlinedTextField(
-                        value = firstName,
-                        onValueChange = { firstName = it },
-                        label = { Text("First Name") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = lastName,
-                        onValueChange = { lastName = it },
-                        label = { Text("Last Name") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-
-                    OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
                         label = { Text("Password") },
                         visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = bio,
+                        onValueChange = { bio = it },
+                        label = { Text("Bio") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = dob,
+                        onValueChange = { dob = it },
+                        label = { Text("Date of Birth") },
+                        placeholder = { Text("DD/MM/YYYY") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -131,11 +173,20 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ✅ Save Button
+            // 💾 Save Button
             Button(
                 onClick = {
-                    // TODO: Handle save action
-                    navController.popBackStack()
+                    currentUser?.let {
+                        val updatedUser = it.copy(
+                            fullName = fullName,
+                            password = password,
+                            bio = bio,
+                            dob = dob
+                        )
+                        userViewModel.updateUser(updatedUser)
+                        Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
