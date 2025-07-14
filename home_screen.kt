@@ -90,7 +90,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import com.example.social_rede_mobile.data.User
 import coil.compose.rememberAsyncImagePainter
-
+import com.example.social_rede_mobile.data.Notification
+import com.example.social_rede_mobile.data.NotificationViewModel
 
 @Composable
 fun HomeScreen(
@@ -118,6 +119,10 @@ fun HomeScreen(
             initializer { CommentViewModel(context.applicationContext as Application) }
         }
     )
+
+    val notificationViewModel: NotificationViewModel = viewModel(factory = viewModelFactory {
+        initializer { NotificationViewModel(context.applicationContext as Application) }
+    })
 
     val posts by postViewModel.posts.observeAsState(emptyList())
     val allUsers by userViewModel.getAllUsers().collectAsState(initial = emptyList())
@@ -190,10 +195,25 @@ fun HomeScreen(
                                         username = currentUsername,
                                         text = commentText
                                     )
+
                                 )
+
+                                // Notify post owner
+                                if (selectedPostForComment!!.username != currentUsername) {
+                                    notificationViewModel.insertNotification(
+                                        Notification(
+                                            username = currentUsername,
+                                            message = "comentou na sua publicação.",
+                                            type = "Comment",
+                                            targetUsername = selectedPostForComment!!.username
+                                        )
+                                    )
+                                }
+
                                 commentText = ""
                                 Toast.makeText(context, "Comment posted!", Toast.LENGTH_SHORT).show()
                             }
+
                         }) {
                             Text("Post")
                         }
@@ -306,6 +326,18 @@ fun HomeScreen(
                             userMap = userMap,
                             onLikeToggle = { postId, liked, delta ->
                                 postViewModel.updateLikeStatus(postId, liked, delta)
+
+                                // Notify post owner if liked
+                                if (liked && post.username != currentUsername) {
+                                    notificationViewModel.insertNotification(
+                                        Notification(
+                                            username = currentUsername,
+                                            message = "liked your post.",
+                                            type = "Like",
+                                            targetUsername = post.username
+                                        )
+                                    )
+                                }
                             },
                             onCommentClick = {
                                 selectedPostForComment = post
@@ -342,7 +374,7 @@ fun HomeScreen(
                             Button(onClick = {
                                 imagePickerLauncher.launch("image/*")
                             }) {
-                                Text("Select Image from Device")
+                                Text("Selecionar imagem ")
                             }
 
                             selectedImageUri.value?.let { uri ->
@@ -378,7 +410,7 @@ fun HomeScreen(
                                         }
                                     }
                                 }) {
-                                    Text("Publish")
+                                    Text("Publicar")
                                 }
                             }
                         }
