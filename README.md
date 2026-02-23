@@ -1,176 +1,80 @@
 📱 PROJETO_SOCIAL_REDE
-🧩 Descrição Geral
+🧩 Descrição Geral:
 
-Este projeto consiste no desenvolvimento de um protótipo funcional de uma aplicação móvel de rede social, criado no âmbito da unidade curricular de PAC.
-Inicialmente focado apenas na interface do utilizador (UI), o projeto evoluiu progressivamente para uma aplicação completa, integrando backend próprio, API REST, base de dados relacional e funcionalidades dinâmicas, aproximando-se do funcionamento real de uma rede social moderna.
+Este projeto consiste no desenvolvimento de um protótipo funcional de uma aplicação móvel de rede social no âmbito da unidade curricular de PAC.
+Inicialmente focado na interface do utilizador, evoluiu para uma solução completa com backend próprio, API REST, base de dados relacional e funcionalidades dinâmicas, simulando o funcionamento de uma rede social real.
 
-A aplicação permite a interação entre utilizadores, criação e visualização de conteúdos, sistema de seguidores, mensagens em tempo real e notificações, simulando um ambiente social realista para fins académicos e de aprendizagem.
+A aplicação permite interação entre utilizadores, criação de conteúdos, sistema de seguidores, mensagens em tempo real e notificações.
 
-🎯 Objetivos do Projeto
+🎯 Objetivos:
 
-Desenvolver uma interface intuitiva e moderna para uma aplicação móvel;
+Desenvolver uma interface móvel moderna e intuitiva;
 
-Implementar as funcionalidades essenciais de uma rede social, tais como:
+Implementar funcionalidades essenciais de uma rede social:
+registo, login, perfis, publicações, feed, likes, comentários, seguidores, mensagens e notificações;
 
-Registo e autenticação de utilizadores;
+Integrar API REST com base de dados;
 
-Perfis de utilizador editáveis;
+Simular comunicação cliente-servidor real;
 
-Publicações com imagem e texto;
-
-Feed dinâmico;
-
-Gostos (likes) e comentários;
-
-Sistema de seguidores (follow/unfollow);
-
-Sistema de mensagens privadas;
-
-Notificações de interações;
-
-Integrar uma API REST própria com base de dados;
-
-Simular comunicação cliente-servidor real entre Android e backend;
-
-Consolidar conhecimentos de desenvolvimento mobile, APIs e bases de dados.
+Consolidar conhecimentos em mobile, APIs e bases de dados;
 
 🧪 Tecnologias Utilizadas
-📱 Frontend (Aplicação Mobile)
+📱 Frontend
 
-Android Studio – Ambiente de desenvolvimento;
+Android Studio, Kotlin, Jetpack Compose, Material 3,Navigation Component
 
-Kotlin – Linguagem principal;
+ViewModel + StateFlow / LiveData
 
-Jetpack Compose – Criação da interface do utilizador;
+RoomDB (offline) e SharedPreferences
 
-Material 3 – Componentes visuais modernos;
+Coil (imagens)
 
-Navigation Component – Navegação entre ecrãs;
-
-ViewModel + StateFlow / LiveData – Gestão de estado;
-
-Room Database – Persistência local (offline);
-
-SharedPreferences – Sessão do utilizador;
-
-Coil – Carregamento de imagens;
-
-Firebase (Firestore) – Sincronização em tempo real do chat (mensagens, typing, seen).
+Firebase Firestore (chat em tempo real)
 
 🌐 Backend / API
 
-FastAPI (Python) – Desenvolvimento da API REST;
+FastAPI (Python), SQLAlchemy, MySQL
 
-SQLAlchemy – ORM para acesso à base de dados;
+Pydantic, Uvicorn
 
-MySQL – Base de dados relacional;
-
-Pydantic – Validação e schemas de dados;
-
-Uvicorn – Servidor da API;
-
-Arquitetura REST com endpoints para:
-
-Utilizadores;
-
-Publicações;
-
-Comentários;
-
-Gostos;
-
-Seguidores;
-
-Mensagens;
-
-Notificações;
-
-Autenticação.
+Arquitetura REST para utilizadores, posts, comentários, likes, seguidores, mensagens e notificações
 
 🔗 Comunicação
 
-Retrofit (Android) – Comunicação com a API;
+Retrofit + JSON
 
-JSON – Troca de dados entre frontend e backend;
+HTTP (GET, POST, DELETE)
 
-HTTP Requests (GET, POST, DELETE).
+📁 Funcionalidades Implementadas
 
-📁 Funcionalidades e Ecrãs Implementados
+Login e registo
 
-🔐 Login e Registo de Utilizador
+Feed dinâmico
 
-🏠 Feed Principal (posts dinâmicos)
+Criação de publicações (texto + imagem)
 
-➕ Criar Nova Publicação (texto + imagem da galeria)
+Likes e comentários
 
-❤️ Sistema de Likes
+Perfil editável com estatísticas
 
-💬 Comentários em publicações
+Pesquisa de utilizadores
 
-👤 Perfil do Utilizador
+Follow / Unfollow
 
-Foto de perfil
+Chat privado em tempo real (typing, seen, emojis)
 
-Bio
+Notificações de interações
 
-Estatísticas (posts, seguidores, a seguir)
+Modo claro/escuro
 
-Edição de perfil
-
-🔎 Pesquisa de Utilizadores
-
-➕ Sistema de Follow / Unfollow
-
-💌 Mensagens Privadas
-
-Chat em tempo real
-
-Indicador de “typing…”
-
-Mensagens lidas (seen)
-
-Reações com emojis
-
-🔔 Notificações
-
-Likes
-
-Comentários
-
-Seguidores
-
-🌙 Modo Claro / Escuro
-
-📱 Bottom Navigation + Floating Action Button expansível
+Bottom Navigation + FAB
 
 🗄️ Base de Dados
 
-O sistema utiliza uma base de dados MySQL, com tabelas para:
-
-Utilizadores;
-
-Publicações;
-
-Comentários;
-
-Seguidores;
-
-Mensagens;
-
-Notificações.
-
-A aplicação Android funciona de forma híbrida, combinando:
-
-RoomDB (offline/local);
-
-API REST (online);
-
-Firebase para sincronização de mensagens.
+Base de dados MySQL com tabelas para utilizadores, publicações, comentários, seguidores, mensagens e notificações.
+A aplicação funciona de forma híbrida: RoomDB (offline), API REST (online) e Firebase para o chat.
 
 🎥 Demonstração
 
-📺 Vídeo demonstrativo do projeto:
-👉 https://www.youtube.com/watch?v=WwTAKCIPXIM
-
-
-O projeto foi desenvolvido exclusivamente para fins académicos, servindo como base de aprendizagem prática em desenvolvimento de aplicações móveis e sistemas distribuídos.
+📺 https://www.youtube.com/watch?v=WwTAKCIPXIM
